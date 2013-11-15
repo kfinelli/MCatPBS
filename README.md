@@ -3,6 +3,8 @@ MCatPBS
 
 scripts to run MC@NLO and MCFM on PBS (portable batch system)
 
+Currently supports ttbar, WW, Z->tau+tau processes
+
 Requires:
 LHAPDF: http://lhapdf.hepforge.org/
 -for fixed-order generation

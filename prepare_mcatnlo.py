@@ -4,11 +4,15 @@ import random
 import os
 import common
 
-random.seed(42)
+random.seed()
 
 
-def CreateScript(script_file,input_file,log_file,command,working_dir,subdir):
-
+def CreateScript(script_file, input_file, log_file, command, working_dir, subdir):
+  """
+  Write out bash script with filename 'script_file' which will run the
+  MC@NLO executable 'command' from input card 'input_file' with stdout
+  directed to 'log_file'.  MC@NLO is run in 'working_dir'/'subdir'.
+  """
   str='#!/bin/bash\n'
   str+='export LD_LIBRARY_PATH='+LHAPDF_lib_dir+':$LD_LIBRARY_PATH\n'
   str+='export LHAPATH='+LHAPATH+'\n'
@@ -21,8 +25,14 @@ def CreateScript(script_file,input_file,log_file,command,working_dir,subdir):
   f.write(str)
   f.close()
 
-def CreateZtautauGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed,fren,ffact):
-
+def CreateZtautauGenInputScale(input_fname, fnamebases, prefix_eventfname, pdf_number, nevents, randomseed, fren, ffact):
+  """
+  Create an input card 'input_fname' for MC@NLO running that generates
+  Z->tau+tau events.  MC@NLO needs to have BASES file 'fnamebases' and
+  will write event files with prefix 'prefix_eventfname'.  Events will
+  be generated with PDF given by 'pdf_number' according to the LHAPDF
+  numbering scheme.
+  """
 
   str=" \'"+fnamebases+"\'                ! prefix for BASES files\n"
   str +=" \'"+prefix_eventfname+"\'               ! prefix for event files\n"
@@ -48,14 +58,23 @@ def CreateZtautauGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_numb
   f.close()
 
 def CreateZtautauGenInput(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed):
+  """Create gen input in the case of nominal ren/fac scales"""
   CreateZtautauGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed,'1','1')
 
 def CreateWWGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed,decay,fren,ffact):
+  """
+  Create an input card 'input_fname' for MC@NLO running that generates
+  WW events.  MC@NLO needs to have BASES file 'fnamebases' and will
+  write event files with prefix 'prefix_eventfname'.  Events will be
+  generated with PDF given by 'pdf_number' according to the LHAPDF
+  numbering scheme.  The decay mode of the WW pair is specified by
+  'decay' as 'em', 'et', 'ee', etc.
+  """
   out=" \'"+fnamebases+"\'                ! prefix for BASES files\n"
   out +=" \'"+prefix_eventfname+"\'               ! prefix for event files\n"
   out +=" 7000 "+fren+" "+ffact+" 1 1 ! energy, fren, ffact, frenmc, ffactmc\n"
   out +="  -12850                          ! -2850/60/70/80=WW/ZZ/ZW+/ZW-\n"
-  out +=" "+str(hppdecay[decay][0])+" "+ str(hppdecay[decay][1])+"               ! 0..6 -> t dec, 7 -> t undec\n"
+  out +=" "+str(common.hppdecay[decay][0])+" "+ str(common.hppdecay[decay][1])+"               ! 0..6 -> t dec, 7 -> t undec\n"
   out +=" 80.42 2.124                  ! M_W, Gamma_W\n"
   out +=" 91.19  2.495                          ! Z Mass and Width\n"
   out +=" 30 0 0 ! GammaX, M_V1(min), M_V1(max)\n"
@@ -84,10 +103,18 @@ def CreateWWGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,ne
   f.close()
 
 def CreateWWGenInput(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed,decay):
+  """Create gen input in the case of nominal ren/fac scales"""
   CreateWWGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed,decay,'1','1')
 
 
 def CreateTtbarGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed,fren,ffact):
+  """
+  Create an input card 'input_fname' for MC@NLO running that generates
+  ttbar events.  MC@NLO needs to have BASES file 'fnamebases' and will
+  write event files with prefix 'prefix_eventfname'.  Events will be
+  generated with PDF given by 'pdf_number' according to the LHAPDF
+  numbering scheme.
+  """
   str=" \'"+fnamebases+"\'                ! prefix for BASES files\n"
   str +=" \'"+prefix_eventfname+"\'               ! prefix for event files\n"
   str +=" 7000 "+fren+" "+ffact+" 1 1 ! energy, fren, ffact, frenmc, ffactmc\n"
@@ -123,14 +150,17 @@ def CreateTtbarGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number
   f.close()
 
 
-
-
 def CreateTtbarGenInput(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed):
+  """Create gen input in the case of nominal ren/fac scales"""
   CreateTtbarGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,nevents,randomseed,'1','1')
 
 
 def DoSubmission_Ztautau(pdfname,pdfnumber,workingdir):
-
+  """
+  Create MC@NLO input cards and batch submission scripts to generate
+  Z->tau+tau events with nominal ren/fac scale using PDF
+  'pdfname','pdfnumber' which will run under 'workingdir'.
+  """
   nsubmissions =1
 
   command = '../../ztautau.mcatnlo.7TeV.CT10nlotNLO_EXE_LHAPDF'
@@ -150,14 +180,17 @@ def DoSubmission_Ztautau(pdfname,pdfnumber,workingdir):
     randomnumber = random.randint(0,100000)
     CreateZtautauGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i),fnamebase+'.'+str(i),event_fname+'.'+str(i),pdfnumber,str(200000),str(randomnumber))
     CreateScript(bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir, subdir)
-#    os.chmod(bsub_fname+'.'+str(i)+'.sh',0755)
-    #fout.write('qsub -q long -l walltime=100:00:00,cput=100:00:00 '+bsub_fname+'.'+str(i)+'.sh\n')
     fout.write('qsub -q short '+bsub_fname+'.'+str(i)+'.sh\n')
     fout.write('sleep 1\n')
 
   fout.close()
 
 def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
+  """
+  Create MC@NLO input cards and batch submission scripts to generate
+  Z->tau+tau events with 2x and 0.5x ren/fac scale variations using PDF
+  'pdfname','pdfnumber' which will run under 'workingdir'.
+  """
 
   nsubmissions =1
 
@@ -182,14 +215,17 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
       randomnumber = random.randint(0,100000)
       CreateZtautauGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag,fnamebase+tag,event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
       CreateScript(bsub_fname+'.'+tag+'.sh',input_fname+'.'+tag,log_fname+'.'+tag+'.txt',command,workingdir, subdir)
-#    os.chmod(bsub_fname+'.'+str(i)+'.sh',0755)
-    #fout.write('qsub -q long -l walltime=100:00:00,cput=100:00:00 '+bsub_fname+'.'+str(i)+'.sh\n')
       fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
       fout.write('sleep 1\n')
 
   fout.close()
 
 def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
+  """
+  Create MC@NLO input cards and batch submission scripts to generate
+  ttbar events with nominal ren/fac scale using PDF
+  'pdfname','pdfnumber' which will run under 'workingdir'.
+  """
 
   nsubmissions =1
 
@@ -210,8 +246,6 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
     randomnumber = random.randint(0,100000)
     CreateTtbarGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i),fnamebase+'.'+str(i),event_fname+'.'+str(i),pdfnumber,str(200000),str(randomnumber))
     CreateScript(bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir,subdir)
-#    os.chmod(bsub_fname+'.'+str(i)+'.sh',0755)
-    #fout.write('qsub -q long -l walltime=100:00:00,cput=100:00:00 '+bsub_fname+'.'+str(i)+'.sh\n')
     fout.write('qsub -q long '+bsub_fname+'.'+str(i)+'.sh\n')
     fout.write('sleep 1\n')
 
@@ -219,6 +253,11 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
 
 
 def DoSubmission_WW(pdfname,pdfnumber,workingdir):
+  """
+  Create MC@NLO input cards and batch submission scripts to generate
+  WW events with nominal ren/fac scale using PDF 'pdfname','pdfnumber'
+  which will run under 'workingdir'.
+  """
 
   nsubmissions =1
 
@@ -240,52 +279,13 @@ def DoSubmission_WW(pdfname,pdfnumber,workingdir):
       randomnumber = random.randint(0,100000)
       CreateWWGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i),fnamebase+'.'+str(i),event_fname+'.'+str(i),pdfnumber,str(50000),str(randomnumber),idecay)
       CreateScript(bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir, subdir)
-  #    os.chmod(bsub_fname+'.'+str(i)+'.sh',0755)
-      #fout.write('qsub -q long -l walltime=100:00:00,cput=100:00:00 '+bsub_fname+'.'+str(i)+'.sh\n')
       fout.write('qsub -q short '+bsub_fname+'.'+str(i)+'.sh\n')
       fout.write('sleep 1\n')
 
     fout.close()
 
 
-path={}
-path['CT10nlo']='ct10nlo'
-path['MSTW2008nlo']='mstw2008nlo'
-path['MSTW2008CP']='mstw2008cp'
-path['HERAPDF15']='herapdf15nlo'
-path['HERAPDF15V']='herapdf15varnlo'
-path['NNPDF23']='nnpdf23nlo'
-path['ABM11']='abm11nlo'
 
-limit={}
-limit['CT10nlo']=53
-limit['MSTW2008nlo']=42
-limit['MSTW2008CP']=48
-limit['HERAPDF15']=21
-limit['HERAPDF15V']=14
-limit['NNPDF23']=101
-limit['ABM11']=29
-
-
-number={}
-number['CT10nlo']=11000
-number['MSTW2008nlo']=21100
-number['MSTW2008CP']=23800
-number['HERAPDF15']=60700
-number['HERAPDF15V']=60730
-number['NNPDF23']=229800
-number['ABM11']=42060
-
-#which = 'CT10nlo'
-#which = 'MSTW2008nlo'
-#which = 'HERAPDF15'
-#which = 'HERAPDF15V'
-#which = 'MSTW2008CP'
-#which = 'NNPDF23'
-#which = 'ABM11'
-
-#DoSubmission_Ttbar(which+str(0),str(number[which]),'/data/finelli/hepsoftware/MC@NLO/LinuxPP/'+path[which]+'/')
-#DoSubmission_ZtautauScale(which+str(0),str(number[which]),'/data/saavedra/hepsoftware/MC@NLO/LinuxPP/'+path[which]+'/')
 for which in ['CT10nlo',
               'HERAPDF15',
               'HERAPDF15V',
@@ -297,17 +297,3 @@ for which in ['CT10nlo',
     DoSubmission_Ttbar(which+str(k),str(number[which]+k),'/data/finelli/hepsoftware/MC@NLO/LinuxPP/'+path[which]+'/')
 #  DoSubmission_Ztautau(which+str(k),str(number[which]+k),'/data/saavedra/hepsoftware/MC@NLO/LinuxPP/'+path[which]+'/')
 
-'''
-f=open("list_200926.txt")
-
-outf2=open("submit_data12.sh","w")
-count=0
-for l in f.readlines():
-  input_file = l.strip()
-  outstr = CreateScript(input_file)
-  outf=open("script_data12_"+str(count)+".sh","w")
-  outf.write(outstr)
-  outf.close()
-  outf2.write("qsub -q long script_data12_"+str(count)+".sh\nsleep 30\n")
-  count+=1
-'''
