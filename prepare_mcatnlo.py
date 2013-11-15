@@ -1,10 +1,21 @@
 #!/usr/bin/env python
 
 import random
-import os
-import common
+import os, sys, errno
+import mcatpbs_common as common
 
 random.seed()
+
+def parseCmdLine(args):
+  """ Parse input command line to optdict. """
+
+  from optparse import OptionParser
+  parser = OptionParser()
+  parser.add_option("--process", dest="process", help="Name of physics process.  Currently supported: ttbar, ww, ztautau", default='ttbar')
+  parser.add_option("--pdf", dest="pdf", help="Name of PDF set to use, named as at http://lhapdf.hepforge.org/pdfsets", default='CT10nlo') 
+  (config, args) = parser.parse_args(args)
+  return config
+
 
 
 def CreateScript(script_file, input_file, log_file, command, working_dir, subdir):
@@ -14,8 +25,8 @@ def CreateScript(script_file, input_file, log_file, command, working_dir, subdir
   directed to 'log_file'.  MC@NLO is run in 'working_dir'/'subdir'.
   """
   str='#!/bin/bash\n'
-  str+='export LD_LIBRARY_PATH='+LHAPDF_lib_dir+':$LD_LIBRARY_PATH\n'
-  str+='export LHAPATH='+LHAPATH+'\n'
+  str+='export LD_LIBRARY_PATH='+common.LHAPDF_lib_dir+':$LD_LIBRARY_PATH\n'
+  str+='export LHAPATH='+common.LHAPATH+'\n'
   str+='cd '+working_dir+'\n'
   str+='mkdir -p '+subdir+'\n'
   str+='cd '+subdir+'\n'
@@ -172,14 +183,14 @@ def DoSubmission_Ztautau(pdfname,pdfnumber,workingdir):
   log_fname = fname + '.log'
   bsub_fname = fname + '.bsub'
 
-  sub_fname = fname+'.suball.sh'
+  sub_fname = common.PBS_workdir+fname+'.suball.sh'
   fout = open(sub_fname,'w')
 
   for i in xrange(nsubmissions):
 
     randomnumber = random.randint(0,100000)
-    CreateZtautauGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i),fnamebase+'.'+str(i),event_fname+'.'+str(i),pdfnumber,str(200000),str(randomnumber))
-    CreateScript(bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir, subdir)
+    CreateZtautauGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i), fnamebase+'.'+str(i), event_fname+'.'+str(i), pdfnumber,str(200000), str(randomnumber))
+    CreateScript(common.PBS_workdir+bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir, subdir)
     fout.write('qsub -q short '+bsub_fname+'.'+str(i)+'.sh\n')
     fout.write('sleep 1\n')
 
@@ -203,7 +214,7 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
   log_fname = fname + '.log'
   bsub_fname = fname + '.bsub'
 
-  sub_fname = fname+'.scale.suball.sh'
+  sub_fname = common.PBS_workdir+fname+'.scale.suball.sh'
   fout = open(sub_fname,'w')
 
   fren=[0.5,1,2]
@@ -214,7 +225,7 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
       tag = 'fr'+str(f1).replace('0.5','5')+'ff'+str(f2).replace('0.5','5')
       randomnumber = random.randint(0,100000)
       CreateZtautauGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag,fnamebase+tag,event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
-      CreateScript(bsub_fname+'.'+tag+'.sh',input_fname+'.'+tag,log_fname+'.'+tag+'.txt',command,workingdir, subdir)
+      CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh',input_fname+'.'+tag,log_fname+'.'+tag+'.txt',command,workingdir, subdir)
       fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
       fout.write('sleep 1\n')
 
@@ -238,14 +249,14 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
   log_fname = fname + '.log'
   bsub_fname = fname + '.bsub'
 
-  sub_fname = fname+'.suball.sh'
+  sub_fname = common.PBS_workdir+fname+'.suball.sh'
   fout = open(sub_fname,'w')
 
   for i in xrange(nsubmissions):
 
     randomnumber = random.randint(0,100000)
     CreateTtbarGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i),fnamebase+'.'+str(i),event_fname+'.'+str(i),pdfnumber,str(200000),str(randomnumber))
-    CreateScript(bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir,subdir)
+    CreateScript(common.PBS_workdir+bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir,subdir)
     fout.write('qsub -q long '+bsub_fname+'.'+str(i)+'.sh\n')
     fout.write('sleep 1\n')
 
@@ -271,29 +282,46 @@ def DoSubmission_WW(pdfname,pdfnumber,workingdir):
     log_fname = fname + '.log'
     bsub_fname = fname + '.bsub'
 
-    sub_fname = fname+'.suball.sh'
+    sub_fname = common.PBS_workdir+fname+'.suball.sh'
     fout = open(sub_fname,'w')
 
     for i in xrange(nsubmissions):
 
       randomnumber = random.randint(0,100000)
       CreateWWGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i),fnamebase+'.'+str(i),event_fname+'.'+str(i),pdfnumber,str(50000),str(randomnumber),idecay)
-      CreateScript(bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir, subdir)
+      CreateScript(common.PBS_workdir+bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir, subdir)
       fout.write('qsub -q short '+bsub_fname+'.'+str(i)+'.sh\n')
       fout.write('sleep 1\n')
 
     fout.close()
 
 
+if __name__=="__main__":
+  config = parseCmdLine(sys.argv[1:])
 
-for which in ['CT10nlo',
-              'HERAPDF15',
-              'HERAPDF15V',
-              'MSTW2008CP',
-              'NNPDF23',
-              'ABM11']:
-  for k in xrange(limit[which]):
-    DoSubmission_WW(which+str(k),str(number[which]+k),'/data/finelli/hepsoftware/MC@NLO/LinuxPP/'+path[which]+'/')
-    DoSubmission_Ttbar(which+str(k),str(number[which]+k),'/data/finelli/hepsoftware/MC@NLO/LinuxPP/'+path[which]+'/')
-#  DoSubmission_Ztautau(which+str(k),str(number[which]+k),'/data/saavedra/hepsoftware/MC@NLO/LinuxPP/'+path[which]+'/')
+  if not (config.pdf in common.pdfs):
+    print 'Invalid PDF name, abort'
+    sys.exit(1)
+
+  if not (config.process in common.processes):
+    print 'Invalid process name, abort'
+    sys.exit(1)
+
+  directory_name=common.MCNLO_workdir+config.pdf+'/'+config.process
+  """check that the necessary directories are in place"""
+  if not os.path.exists(directory_name):
+    print 'making '+directory_name
+    try:
+      os.makedirs(directory_name)
+    except OSError as exc: 
+      if exc.errno == errno.EEXIST and os.path.isdir(directory_name):
+        pass
+
+  for k in xrange(common.limit[config.pdf]):
+    if config.process=='ww':
+      DoSubmission_WW(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+    if config.process=='ttbar':
+      DoSubmission_Ttbar(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+    if config.process=='ztautau':
+      DoSubmission_Ztautau(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
 

@@ -1,7 +1,11 @@
 #path to libLHAPDF.so
-LHAPDF_lib_dir='/data/saavedra/hepsoftware/lhapdf/lib'
+LHAPDF_lib_dir='/data/saavedra/hepsoftware/lhapdf/lib/'
 #lhapath - path to .LHgrid files
-LHAPATH='/data/saavedra/hepsoftware/lhapdf/share/lhapdf'
+LHAPATH='/data/saavedra/hepsoftware/lhapdf/share/lhapdf/'
+#working directory for running MC@NLO
+MCNLO_workdir='/data/finelli/test/'
+#working directory for PBS scripts
+PBS_workdir='/data/finelli/test/'
 
 
 #herwig decay paths for WW
@@ -14,6 +18,16 @@ hppdecay = {'ee':[1, 1],
             'te':[3, 1],
             'tm':[3, 2],
             'tt':[3, 3]}
+
+processes=['ttbar','ww','ztautau']
+
+pdfs=['CT10nlo',
+      'MSTW2008nlo68cl',
+      'MSTW2008CPdeutnlo68cl',
+      'abm11_5n_nlo',
+      'HERAPDF15NLO_EIG',
+      'HERAPDF15NLO_VAR',
+      'NNPDF23_nlo_as_0118']
 
 limit={}
 limit['CT10nlo']=53
