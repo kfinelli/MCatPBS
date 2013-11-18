@@ -106,6 +106,7 @@ def CreateWWGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,ne
   out +=" "+randomseed+"                      ! seed for rnd numbers\n"
   out +="  0.2                             ! zi\n"
   out +="  0                        ! 0=running, 1=fixed alpha_EM\n"
+  out +="  1                        ! 0 => MC@@NLO format, 1 => LHEF\n"
   out +="  10 10                 ! itmx1,itmx2\n"
 
   f = open(input_fname,"w")
@@ -153,6 +154,7 @@ def CreateTtbarGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number
   str +=" 1                        ! 0 => wgt=+1/-1, 1 => wgt=+w/-w\n"
   str +=" "+randomseed+"                      ! seed for rnd numbers\n"
   str +=" 0.3                             ! zi\n"
+  str +=" 1                        ! 0 => MC@@NLO format, 1 => LHEF\n"
   str +=" 10 10                 ! itmx1,itmx2\n"
 
   f = open(input_fname,"w")
