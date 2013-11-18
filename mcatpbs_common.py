@@ -7,6 +7,9 @@ MCNLO_workdir='/data/finelli/test/'
 #working directory for PBS scripts
 PBS_workdir='/data/finelli/test/'
 
+#download URL for mcatnlo tgz
+MCNLO_url='http://www.hep.phy.cam.ac.uk/theory/webber/MCatNLO/Package4.10_dist.tar.gz'
+
 
 #herwig decay paths for WW
 hppdecay = {'ee':[1, 1],
@@ -47,3 +50,14 @@ number['abm11_5n_nlo']=42060
 number['HERAPDF15NLO_EIG']=60700
 number['HERAPDF15NLO_VAR']=60730
 number['NNPDF23_nlo_as_0118']=229800
+
+def checkAndMkdir(dirname):
+    import os, errno
+    """check that the necessary directories are in place, make if necessary"""
+    if not os.path.exists(dirname):
+        print 'making '+dirname
+    try:
+        os.makedirs(dirname)
+    except OSError as exc: 
+        if exc.errno == errno.EEXIST and os.path.isdir(dirname):
+            pass

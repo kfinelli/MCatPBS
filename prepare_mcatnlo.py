@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import random
-import os, sys, errno
+import os, sys
 import mcatpbs_common as common
 
 random.seed()
