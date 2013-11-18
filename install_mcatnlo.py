@@ -6,8 +6,10 @@ import os, sys
 import tarfile
 import glob
 
+
+
 if __name__=="__main__":
-  config = parseCmdLine(sys.argv[1:])
+#  config = parseCmdLine(sys.argv[1:])
 
   common.checkAndMkdir(common.MCNLO_workdir)
 
