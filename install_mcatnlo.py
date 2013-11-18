@@ -3,6 +3,7 @@
 import mcatpbs_common as common
 import urllib
 import os, sys
+import subprocess
 import tarfile
 import glob
 
@@ -81,6 +82,6 @@ if __name__=="__main__":
   prepend=''
   if not (common.LHAPDF_lib_dir in os.getenv('LD_LIBRARY_PATH')):
     print 'fixing ld_library_path'
-    prepend='LD_LIBRARY_PATH='+ common.LHAPDF_lib_dir+':' + os.getenv('LD_LIBRARY_PATH')+'; '
+    os.environ['LD_LIBRARY_PATH'] =  common.LHAPDF_lib_dir+':' + os.getenv('LD_LIBRARY_PATH')
 
-  os.system('bash '+config.process+'mcnlo.input')
+  subprocess.call(['bash',config.process+'mcnlo.input'])
