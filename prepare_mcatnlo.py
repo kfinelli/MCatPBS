@@ -205,7 +205,7 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = '../../ztautau.mcatnlo.7TeV.CT10nlotNLO_EXE_LHAPDF'
+  command = '../../ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
   subdir = 'ztautau'
   fnamebase = fname + '.bases'
@@ -225,7 +225,7 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
       tag = 'fr'+str(f1).replace('0.5','5')+'ff'+str(f2).replace('0.5','5')
       randomnumber = random.randint(0,100000)
       CreateZtautauGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag,fnamebase+tag,event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
-      CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh',input_fname+'.'+tag,log_fname+'.'+tag+'.txt',command,workingdir, subdir)
+      CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh', input_fname+'.'+tag, log_fname+'.'+tag+'.txt', command, workingdir, subdir)
       fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
       fout.write('sleep 1\n')
 
@@ -240,7 +240,7 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = '../../ttbar.mcatnlo.7TeV.CT10nlotNLO_EXE_LHAPDF'
+  command = '../../ttbarNLO_EXE_LHAPDF'
   fname = 'ttbar.mcatnlo.7TeV.'+pdfname
   subdir = 'ttbar'
   fnamebase = fname + '.bases'
@@ -272,7 +272,7 @@ def DoSubmission_WW(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = '../../ww.mcatnlo.7TeV.CT10nlotNLO_EXE_LHAPDF'
+  command = '../../wwNLO_EXE_LHAPDF'
   for idecay in ['em','et','me','mt','te','tm','tt']:
     fname = 'ww'+idecay+'.mcatnlo.7TeV.'+pdfname
     subdir = 'ww'+idecay
