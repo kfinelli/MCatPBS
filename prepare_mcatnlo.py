@@ -13,6 +13,7 @@ def parseCmdLine(args):
   parser = OptionParser()
   parser.add_option("--process", dest="process", help="Name of physics process.  Currently supported: ttbar, ww, ztautau", default='ttbar')
   parser.add_option("--pdf", dest="pdf", help="Name of PDF set to use, named as at http://lhapdf.hepforge.org/pdfsets", default='CT10nlo') 
+  parser.add_option("--doScale", dest="doScale", help="Create scale variation output scripts", action='store_true', default=False)
   (config, args) = parser.parse_args(args)
   return config
 
@@ -176,7 +177,7 @@ def DoSubmission_Ztautau(pdfname,pdfnumber,workingdir):
   """
   nsubmissions =1
 
-  command = '../../ztautau.mcatnlo.7TeV.CT10nlotNLO_EXE_LHAPDF'
+  command = '../../ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
   subdir = 'ztautau'
   fnamebase = fname + '.bases'
@@ -204,8 +205,6 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
   Z->tau+tau events with 2x and 0.5x ren/fac scale variations using PDF
   'pdfname','pdfnumber' which will run under 'workingdir'.
   """
-
-  nsubmissions =1
 
   command = '../../ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
@@ -265,6 +264,41 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
   fout.close()
 
 
+def DoSubmission_TtbarScale(pdfname,pdfnumber,workingdir):
+  """
+  Create MC@NLO input cards and batch submission scripts to generate
+  ttbar events with varied ren/fac scale using PDF
+  'pdfname','pdfnumber' which will run under 'workingdir'.
+  """
+
+  command = '../../ttbarNLO_EXE_LHAPDF'
+  fname = 'ttbar.mcatnlo.7TeV.'+pdfname
+  subdir = 'ttbar'
+  fnamebase = fname + '.bases'
+  event_fname = fname + '.events'
+  input_fname = fname + '.input'
+  log_fname = fname + '.log'
+  bsub_fname = fname + '.bsub'
+
+  sub_fname = common.PBS_workdir+fname+'.scale.suball.sh'
+  fout = open(sub_fname,'w')
+
+  fren=[0.5,1,2]
+  ffac=[0.5,1,2]
+
+  for f1 in fren:
+    for f2 in ffac:
+      tag = 'fr'+str(f1).replace('0.5','5')+'ff'+str(f2).replace('0.5','5')
+      randomnumber = random.randint(0,100000)
+      CreateTtbarGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag, fnamebase+tag, event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
+      CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh', input_fname+'.'+tag, log_fname+'.'+tag+'.txt', command, workingdir, subdir)
+      fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
+      fout.write('sleep 1\n')
+
+  fout.close()
+
+
+
 def DoSubmission_WW(pdfname,pdfnumber,workingdir):
   """
   Create MC@NLO input cards and batch submission scripts to generate
@@ -298,6 +332,43 @@ def DoSubmission_WW(pdfname,pdfnumber,workingdir):
     fout.close()
 
 
+def DoSubmission_WWScale(pdfname,pdfnumber,workingdir):
+  """
+  Create MC@NLO input cards and batch submission scripts to generate
+  WW events with nominal ren/fac scale using PDF 'pdfname','pdfnumber'
+  which will run under 'workingdir'.
+  """
+
+  nsubmissions =1
+
+  command = '../../wwNLO_EXE_LHAPDF'
+  for idecay in ['em','et','me','mt','te','tm','tt']:
+    fname = 'ww'+idecay+'.mcatnlo.7TeV.'+pdfname
+    subdir = 'ww'+idecay
+    fnamebase = fname + '.bases'
+    event_fname = fname + '.events'
+    input_fname = fname + '.input'
+    log_fname = fname + '.log'
+    bsub_fname = fname + '.bsub'
+
+    sub_fname = common.PBS_workdir+fname+'.suball.sh'
+    fout = open(sub_fname,'w')
+
+    fren=[0.5,1,2]
+    ffac=[0.5,1,2]
+
+    for f1 in fren:
+      for f2 in ffac:
+        tag = 'fr'+str(f1).replace('0.5','5')+'ff'+str(f2).replace('0.5','5')
+        randomnumber = random.randint(0,100000)
+        CreateWWGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag, fnamebase+tag, event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
+        CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh', input_fname+'.'+tag, log_fname+'.'+tag+'.txt', command, workingdir, subdir)
+        fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
+        fout.write('sleep 1\n')
+
+    fout.close()
+
+
 if __name__=="__main__":
   config = parseCmdLine(sys.argv[1:])
 
@@ -321,9 +392,17 @@ if __name__=="__main__":
 
   for k in xrange(common.limit[config.pdf]):
     if config.process=='ww':
-      DoSubmission_WW(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+      if config.doScale:        
+        DoSubmission_WWScale(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+      else:
+        DoSubmission_WW(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
     if config.process=='ttbar':
-      DoSubmission_Ttbar(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+      if config.doScale:        
+        DoSubmission_TtbarScale(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+      else:
+        DoSubmission_Ttbar(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
     if config.process=='ztautau':
-      DoSubmission_Ztautau(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
-
+      if config.doScale:        
+        DoSubmission_ZtautauScale(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+      else:
+        DoSubmission_Ztautau(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
