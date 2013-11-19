@@ -177,7 +177,7 @@ def DoSubmission_Ztautau(pdfname,pdfnumber,workingdir):
   """
   nsubmissions =1
 
-  command = '../../ztautauNLO_EXE_LHAPDF'
+  command = '../../LinuxPP/ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
   subdir = 'ztautau'
   fnamebase = fname + '.bases'
@@ -206,7 +206,7 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
   'pdfname','pdfnumber' which will run under 'workingdir'.
   """
 
-  command = '../../ztautauNLO_EXE_LHAPDF'
+  command = '../../LinuxPP/ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
   subdir = 'ztautau'
   fnamebase = fname + '.bases'
@@ -241,7 +241,7 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = '../../ttbarNLO_EXE_LHAPDF'
+  command = '../../LinuxPP/ttbarNLO_EXE_LHAPDF'
   fname = 'ttbar.mcatnlo.7TeV.'+pdfname
   subdir = 'ttbar'
   fnamebase = fname + '.bases'
@@ -271,7 +271,7 @@ def DoSubmission_TtbarScale(pdfname,pdfnumber,workingdir):
   'pdfname','pdfnumber' which will run under 'workingdir'.
   """
 
-  command = '../../ttbarNLO_EXE_LHAPDF'
+  command = '../../LinuxPP/ttbarNLO_EXE_LHAPDF'
   fname = 'ttbar.mcatnlo.7TeV.'+pdfname
   subdir = 'ttbar'
   fnamebase = fname + '.bases'
@@ -308,7 +308,7 @@ def DoSubmission_WW(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = '../../wwNLO_EXE_LHAPDF'
+  command = '../../LinuxPP/wwNLO_EXE_LHAPDF'
   for idecay in ['em','et','me','mt','te','tm','tt']:
     fname = 'ww'+idecay+'.mcatnlo.7TeV.'+pdfname
     subdir = 'ww'+idecay
@@ -341,7 +341,7 @@ def DoSubmission_WWScale(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = '../../wwNLO_EXE_LHAPDF'
+  command = '../../LinuxPP/wwNLO_EXE_LHAPDF'
   for idecay in ['em','et','me','mt','te','tm','tt']:
     fname = 'ww'+idecay+'.mcatnlo.7TeV.'+pdfname
     subdir = 'ww'+idecay
