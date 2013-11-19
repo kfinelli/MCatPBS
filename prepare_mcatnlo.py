@@ -361,7 +361,7 @@ def DoSubmission_WWScale(pdfname,pdfnumber,workingdir):
       for f2 in ffac:
         tag = 'fr'+str(f1).replace('0.5','5')+'ff'+str(f2).replace('0.5','5')
         randomnumber = random.randint(0,100000)
-        CreateWWGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag, fnamebase+tag, event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
+        CreateWWGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag, fnamebase+tag, event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber), idecay, str(f1),str(f2))
         CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh', input_fname+'.'+tag, log_fname+'.'+tag+'.txt', command, workingdir, subdir)
         fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
         fout.write('sleep 1\n')
