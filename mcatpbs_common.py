@@ -2,11 +2,11 @@
 LHAPDF_lib_dir='/data/saavedra/hepsoftware/lhapdf/lib/'
 
 #lhapath - path to .LHgrid files
-LHAPATH='/data/saavedra/hepsoftware/lhapdf/share/lhapdf/'
+LHAPATH='/data/saavedra/hepsoftware/lhapdf/share/lhapdf/PDFsets/'
 
 #working directory for running MC@NLO here the executables should be found
 #(e.g. under the LinuxPP directory).  I need write access to this directory
-MCNLO_workdir='/data/finelli/NLOGen/'
+MCNLO_workdir='/data/finelli/analysisStandalone/hepsoftware/NLOGen/'
 
 #working directory for PBS scripts
 PBS_workdir='/data/finelli/test/'
