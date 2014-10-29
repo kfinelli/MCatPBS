@@ -52,16 +52,16 @@ def CreateZtautauGenInputScale(input_fname, fnamebases, prefix_eventfname, pdf_n
   str +=" -1355                          ! -135#/136#/137#/146#/147#=Zg/Z/g/W+/W-\n"
   str +=" 91.1876 2.4952                  ! M_V, Ga_V\n"
   str +=" -1 40 2400 ! GammaX, M_V(min), M_V(max)\n"
-  str +=" 0.32 0.32 0.5 1.29 4.2 0.75 ! quark and gluon masses\n"
+  str +=" 0.32 0.32 0.5 1.55 4.95 0.75 ! quark and gluon masses\n"
   str +=" \'P\'  \'P\'               ! hadron types\n"
   str +=" \'LHAPDF\' "+pdf_number+"   ! PDF group and id number\n"
   str +=" -1                     ! Lambda_5, <0 for default\n"
   str +=" \'MS\'                   ! scheme\n"
   str +=" "+nevents+"              ! number of events\n"
-  str +=" 1                        ! 0 => wgt=+1/-1, 1 => wgt=+w/-w\n"
+  str +=" 0                        ! 0 => wgt=+1/-1, 1 => wgt=+w/-w\n"
   str +=" "+randomseed+"           ! seed for rnd numbers\n"
   str +=" 0                        ! 0=running, 1=fixed alpha_EM\n"
-  str +=" 0                        ! 0 => MC@@NLO format, 1 => LHEF\n"
+#  str +=" 0                        ! 0 => MC@@NLO format, 1 => LHEF\n"
   str +=" 10 10                 ! itmx1,itmx2\n"
 
   f = open(input_fname,"w")
@@ -97,17 +97,17 @@ def CreateWWGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number,ne
   out +=" 0 0 0  ! Dg_1(ph), Dk(ph), lambda(ph)\n"
   out +=" 0                        ! Lambda of FF\n"
   out +="  1                        ! 0=an cpl weights, 1=no weights\n"
-  out +="  0.32 0.32 0.5 1.55 4.95 0.75 ! quark and gluon masses\n"
+  out +=" 0.32 0.32 0.5 1.55 4.95 0.75 ! quark and gluon masses\n"
   out +=" \'P\'  \'P\'               ! hadron types\n"
   out +=" \'LHAPDF\'   "+pdf_number+"            ! PDF group and id number\n"
   out +="  -1                     ! Lambda_5, <0 for default\n"
   out +=" \'MS\'                   ! scheme\n"
   out +=" "+nevents+"                        ! number of events\n"
-  out +="  1                        ! 0 => wgt=+1/-1, 1 => wgt=+w/-w\n"
+  out +="  0                        ! 0 => wgt=+1/-1, 1 => wgt=+w/-w\n"
   out +=" "+randomseed+"                      ! seed for rnd numbers\n"
   out +="  0.2                             ! zi\n"
   out +="  0                        ! 0=running, 1=fixed alpha_EM\n"
-  out +="  0                        ! 0 => MC@@NLO format, 1 => LHEF\n"
+  #out +="  0                        ! 0 => MC@@NLO format, 1 => LHEF\n"
   out +="  10 10                 ! itmx1,itmx2\n"
 
   f = open(input_fname,"w")
@@ -152,10 +152,10 @@ def CreateTtbarGenInputScale(input_fname,fnamebases,prefix_eventfname,pdf_number
   str +=" -1                     ! Lambda_5, <0 for default\n"
   str +=" \'MS\'                   ! scheme\n"
   str +=" "+nevents+"                        ! number of events\n"
-  str +=" 1                        ! 0 => wgt=+1/-1, 1 => wgt=+w/-w\n"
+  str +=" 0                        ! 0 => wgt=+1/-1, 1 => wgt=+w/-w\n"
   str +=" "+randomseed+"                      ! seed for rnd numbers\n"
   str +=" 0.3                             ! zi\n"
-  str +=" 0                        ! 0 => MC@@NLO format, 1 => LHEF\n"
+  #str +=" 0                        ! 0 => MC@@NLO format, 1 => LHEF\n"
   str +=" 10 10                 ! itmx1,itmx2\n"
 
   f = open(input_fname,"w")
@@ -177,7 +177,7 @@ def DoSubmission_Ztautau(pdfname,pdfnumber,workingdir):
   """
   nsubmissions =1
 
-  command = common.MCNLO_workdir+'/LinuxPP/ztautauNLO_EXE_LHAPDF'
+  command = common.MCNLO_workdir+'/Linux/ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
   subdir = 'ztautau'
   fnamebase = fname + '.bases'
@@ -206,7 +206,7 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
   'pdfname','pdfnumber' which will run under 'workingdir'.
   """
 
-  command = common.MCNLO_workdir+'/LinuxPP/ztautauNLO_EXE_LHAPDF'
+  command = common.MCNLO_workdir+'/Linux/ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
   subdir = 'ztautau'
   fnamebase = fname + '.bases'
@@ -241,7 +241,7 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = common.MCNLO_workdir+'/LinuxPP/ttbarNLO_EXE_LHAPDF'
+  command = common.MCNLO_workdir+'/Linux/ttbarNLO_EXE_LHAPDF'
   fname = 'ttbar.mcatnlo.7TeV.'+pdfname
   subdir = 'ttbar'
   fnamebase = fname + '.bases'
@@ -271,7 +271,7 @@ def DoSubmission_TtbarScale(pdfname,pdfnumber,workingdir):
   'pdfname','pdfnumber' which will run under 'workingdir'.
   """
 
-  command = common.MCNLO_workdir+'/LinuxPP/ttbarNLO_EXE_LHAPDF'
+  command = common.MCNLO_workdir+'/Linux/ttbarNLO_EXE_LHAPDF'
   fname = 'ttbar.mcatnlo.7TeV.'+pdfname
   subdir = 'ttbar'
   fnamebase = fname + '.bases'
@@ -308,7 +308,7 @@ def DoSubmission_WW(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = common.MCNLO_workdir+'/LinuxPP/wwNLO_EXE_LHAPDF'
+  command = common.MCNLO_workdir+'/Linux/wwNLO_EXE_LHAPDF'
   for idecay in ['em','et','me','mt','te','tm','tt']:
     fname = 'ww'+idecay+'.mcatnlo.7TeV.'+pdfname
     subdir = 'ww'+idecay
@@ -341,7 +341,7 @@ def DoSubmission_WWScale(pdfname,pdfnumber,workingdir):
 
   nsubmissions =1
 
-  command = common.MCNLO_workdir+'/LinuxPP/wwNLO_EXE_LHAPDF'
+  command = common.MCNLO_workdir+'/Linux/wwNLO_EXE_LHAPDF'
   for idecay in ['em','et','me','mt','te','tm','tt']:
     fname = 'ww'+idecay+'.mcatnlo.7TeV.'+pdfname
     subdir = 'ww'+idecay
