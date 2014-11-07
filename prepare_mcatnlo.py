@@ -179,7 +179,7 @@ def DoSubmission_Ztautau(pdfname,pdfnumber,workingdir):
 
   command = common.MCNLO_workdir+'/Linux/ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
-  subdir = 'ztautau'
+  subdir = 'ztautau.'+pdfnumber
   fnamebase = fname + '.bases'
   event_fname = fname + '.events'
   input_fname = fname + '.input'
@@ -195,7 +195,7 @@ def DoSubmission_Ztautau(pdfname,pdfnumber,workingdir):
     CreateZtautauGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i), fnamebase+'.'+str(i), event_fname+'.'+str(i), pdfnumber,str(200000), str(randomnumber))
     CreateScript(common.PBS_workdir+bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir, subdir)
     fout.write('qsub -q short '+bsub_fname+'.'+str(i)+'.sh\n')
-    fout.write('sleep 1\n')
+    fout.write('sleep 0.2\n')
 
   fout.close()
 
@@ -208,7 +208,7 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
 
   command = common.MCNLO_workdir+'/Linux/ztautauNLO_EXE_LHAPDF'
   fname = 'ztautau.mcatnlo.7TeV.'+pdfname
-  subdir = 'ztautau'
+  subdir = 'ztautau.'+pdfnumber
   fnamebase = fname + '.bases'
   event_fname = fname + '.events'
   input_fname = fname + '.input'
@@ -224,11 +224,13 @@ def DoSubmission_ZtautauScale(pdfname,pdfnumber,workingdir):
   for f1 in fren:
     for f2 in ffac:
       tag = 'fr'+str(f1).replace('0.5','5')+'ff'+str(f2).replace('0.5','5')
+      thissubdir= subdir+'.'+tag
       randomnumber = random.randint(0,100000)
-      CreateZtautauGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag,fnamebase+tag,event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
-      CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh', input_fname+'.'+tag, log_fname+'.'+tag+'.txt', command, workingdir, subdir)
+      common.checkAndMkdir(workingdir+'/'+thissubdir)
+      CreateZtautauGenInputScale(workingdir+'/'+thissubdir+'/'+input_fname+'.'+tag,fnamebase+tag,event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
+      CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh', input_fname+'.'+tag, log_fname+'.'+tag+'.txt', command, workingdir, thissubdir)
       fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
-      fout.write('sleep 1\n')
+      fout.write('sleep 0.2\n')
 
   fout.close()
 
@@ -243,7 +245,7 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
 
   command = common.MCNLO_workdir+'/Linux/ttbarNLO_EXE_LHAPDF'
   fname = 'ttbar.mcatnlo.7TeV.'+pdfname
-  subdir = 'ttbar'
+  subdir = 'ttbar'+pdfnumber
   fnamebase = fname + '.bases'
   event_fname = fname + '.events'
   input_fname = fname + '.input'
@@ -259,7 +261,7 @@ def DoSubmission_Ttbar(pdfname,pdfnumber,workingdir):
     CreateTtbarGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i),fnamebase+'.'+str(i),event_fname+'.'+str(i),pdfnumber,str(200000),str(randomnumber))
     CreateScript(common.PBS_workdir+bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir,subdir)
     fout.write('qsub -q long '+bsub_fname+'.'+str(i)+'.sh\n')
-    fout.write('sleep 1\n')
+    fout.write('sleep 0.2\n')
 
   fout.close()
 
@@ -273,7 +275,7 @@ def DoSubmission_TtbarScale(pdfname,pdfnumber,workingdir):
 
   command = common.MCNLO_workdir+'/Linux/ttbarNLO_EXE_LHAPDF'
   fname = 'ttbar.mcatnlo.7TeV.'+pdfname
-  subdir = 'ttbar'
+  subdir = 'ttbar'+pdfnumber
   fnamebase = fname + '.bases'
   event_fname = fname + '.events'
   input_fname = fname + '.input'
@@ -293,7 +295,7 @@ def DoSubmission_TtbarScale(pdfname,pdfnumber,workingdir):
       CreateTtbarGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag, fnamebase+tag, event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber),str(f1),str(f2))
       CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh', input_fname+'.'+tag, log_fname+'.'+tag+'.txt', command, workingdir, subdir)
       fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
-      fout.write('sleep 1\n')
+      fout.write('sleep 0.2\n')
 
   fout.close()
 
@@ -311,7 +313,7 @@ def DoSubmission_WW(pdfname,pdfnumber,workingdir):
   command = common.MCNLO_workdir+'/Linux/wwNLO_EXE_LHAPDF'
   for idecay in ['em','et','me','mt','te','tm','tt']:
     fname = 'ww'+idecay+'.mcatnlo.7TeV.'+pdfname
-    subdir = 'ww'+idecay
+    subdir = 'ww'+idecay+'.'+pdfnumber
     fnamebase = fname + '.bases'
     event_fname = fname + '.events'
     input_fname = fname + '.input'
@@ -327,7 +329,7 @@ def DoSubmission_WW(pdfname,pdfnumber,workingdir):
       CreateWWGenInput(workingdir+'/'+subdir+'/'+input_fname+'.'+str(i),fnamebase+'.'+str(i),event_fname+'.'+str(i),pdfnumber,str(50000),str(randomnumber),idecay)
       CreateScript(common.PBS_workdir+bsub_fname+'.'+str(i)+'.sh',input_fname+'.'+str(i),log_fname+'.'+str(i)+'.txt',command,workingdir, subdir)
       fout.write('qsub -q short '+bsub_fname+'.'+str(i)+'.sh\n')
-      fout.write('sleep 1\n')
+      fout.write('sleep 0.2\n')
 
     fout.close()
 
@@ -344,7 +346,7 @@ def DoSubmission_WWScale(pdfname,pdfnumber,workingdir):
   command = common.MCNLO_workdir+'/Linux/wwNLO_EXE_LHAPDF'
   for idecay in ['em','et','me','mt','te','tm','tt']:
     fname = 'ww'+idecay+'.mcatnlo.7TeV.'+pdfname
-    subdir = 'ww'+idecay
+    subdir = 'ww'+idecay+'.'+pdfnumber
     fnamebase = fname + '.bases'
     event_fname = fname + '.events'
     input_fname = fname + '.input'
@@ -364,7 +366,7 @@ def DoSubmission_WWScale(pdfname,pdfnumber,workingdir):
         CreateWWGenInputScale(workingdir+'/'+subdir+'/'+input_fname+'.'+tag, fnamebase+tag, event_fname+'.'+tag,pdfnumber,str(200000),str(randomnumber), idecay, str(f1),str(f2))
         CreateScript(common.PBS_workdir+bsub_fname+'.'+tag+'.sh', input_fname+'.'+tag, log_fname+'.'+tag+'.txt', command, workingdir, subdir)
         fout.write('qsub -q short '+bsub_fname+'.'+tag+'.sh\n')
-        fout.write('sleep 0.3\n')
+        fout.write('sleep 0.2\n')
 
     fout.close()
 
@@ -381,28 +383,23 @@ if __name__=="__main__":
     sys.exit(1)
 
   directory_name=common.MCNLO_workdir+config.pdf+'/'+config.process
-  """check that the necessary directories are in place"""
-  if not os.path.exists(directory_name):
-    print 'making '+directory_name
-    try:
-      os.makedirs(directory_name)
-    except OSError as exc: 
-      if exc.errno == errno.EEXIST and os.path.isdir(directory_name):
-        pass
+  common.checkAndMkdir(directory_name)
+
+  pdfname = config.pdf[0:13]
 
   for k in xrange(common.limit[config.pdf]):
     if config.process=='ww':
       if config.doScale:        
-        DoSubmission_WWScale(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+        DoSubmission_WWScale(pdfname+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
       else:
-        DoSubmission_WW(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+        DoSubmission_WW(pdfname+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
     if config.process=='ttbar':
       if config.doScale:        
-        DoSubmission_TtbarScale(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+        DoSubmission_TtbarScale(pdfname+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
       else:
-        DoSubmission_Ttbar(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+        DoSubmission_Ttbar(pdfname+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
     if config.process=='ztautau':
       if config.doScale:        
-        DoSubmission_ZtautauScale(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+        DoSubmission_ZtautauScale(pdfname+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
       else:
-        DoSubmission_Ztautau(config.pdf+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
+        DoSubmission_Ztautau(pdfname+str(k), str(common.number[config.pdf]+k), common.MCNLO_workdir+config.pdf+'/')
